@@ -199,21 +199,106 @@ four = [
 "Y no me he curao ná.",
 "Pero nunca nuestra amistad"]
 
+var buscarRima = function(fraseA, frases){
+	var seraRima = frases[Math.floor(Math.random() * frases.length)];
+	if(esRima(fraseA, seraRima)){
+		return seraRima;
+	}else{
+		return buscarRima(fraseA, frases);
+	}
+}
+
+var getLastVocalTilde = function(f){
+	var frase = f.replace(/\.*\ */g, '');
+	var vocales = ['á', 'é', 'í', 'ó', 'ú'];
+	var lastLetter = frase[frase.length - 1];
+	var preLastLetter = frase[frase.length - 2];
+	var indexA = vocales.indexOf(lastLetter);
+	if( indexA >= 0 ){
+		return vocales[indexA];
+	}else{
+		return vocales[vocales.indexOf(preLastLetter)]
+	}
+}
+
+var simitilud = function(f, fb){
+	var similar = 0;
+	var continuar = true;
+	var fa = new String(f.replace(/\.*\ */g, ''));
+	var fraseB = new String(fb.replace(/\.*\ */g, ''));
+	var length = fa.length;
+	if( fraseB.length > fa.length ){
+		length = fraseB.length;
+	}
+	for( var i = 0; i < length; i++ ){
+		if( fa[fa.length - i] && fraseB[fraseB.length - i] ){
+			if( continuar ){
+				if( fa[fa.length - i] === fraseB[fraseB.length - i] ){
+					similar++;
+				}else{
+					continuar = false;
+				}
+			}
+		}
+	}
+	return similar;
+}
+
+
+var getLastTwoVocal = function(f){
+	var frase = new String(f.replace(/\.*\ */g, ''));
+	var vocales = ['a', 'e', 'i', 'o', 'u', 'á', 'é', 'í', 'ó', 'ú', 'ü'];
+	var vocalesOracion = [];
+	for( var i = frase.length; i >= 0; i-- ){
+		if( vocales.indexOf(frase[i]) >= 0 ){
+			vocalesOracion.push(frase[i]);
+		}
+	}
+	return vocalesOracion[1] + vocalesOracion[0];
+}
+
+var esRima = function(fraseA, fraseB){
+	// Probando
+	// Rima simple, terminada en cualquier vocal con tilde
+	var vocalA = getLastVocalTilde(fraseA);
+	var vocalB = getLastVocalTilde(fraseB);
+	if( (vocalA && vocalB) && vocalA === vocalB ){
+		return true;
+	}
+
+// Similitud del final
+	if( simitilud(fraseA, fraseB) > 2 ){
+		return true;
+	}
+
+// Las vocales al menos? :(
+	var lastTwoVocalTildeA = getLastTwoVocal(fraseA);
+	var lastTwoVocalTildeB = getLastTwoVocal(fraseB);
+	if( lastTwoVocalTildeA === lastTwoVocalTildeB ){
+		return true;
+	}
+
+	return false;
+}
 
 var paya = function() {
 	var _paya = new Array();
-	_paya.push(one[Math.floor(Math.random() * one.length)]);
-	_paya.push(two[Math.floor(Math.random() * two.length)]);
-	_paya.push(three[Math.floor(Math.random() * three.length)]);
-	_paya.push(four[Math.floor(Math.random() * four.length)]);
+	var frase1 = one[Math.floor(Math.random() * one.length)];
+	var frase2 = two[Math.floor(Math.random() * two.length)];
+	var frase3 = buscarRima(frase1, three);
+	var frase4 = buscarRima(frase2, four);
+	_paya.push(frase1);
+	_paya.push(frase2);
+	_paya.push(frase3);
+	_paya.push(frase4);
 
 	return _paya;
 }
 app.get('/', function (req, res) {
-	
+
 	res.send('<h1> Paya Generator 3000 </h1>' + paya().join('<br>'));
 });
 
 app.listen(8080, function () {
-	  console.log('Example app listening on port 3000!');
+	  console.log('Example app listening on port 8080!');
 });
