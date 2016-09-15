@@ -197,7 +197,9 @@ four = [
 "las hayan tomado con alegría.",
 "Nos pongamos todos a trabajar.",
 "Y no me he curao ná.",
-"Pero nunca nuestra amistad"]
+"Pero nunca nuestra amistad"];
+
+var port = process.env.PORT || 8080;
 
 
 var paya = function() {
@@ -214,6 +216,6 @@ app.get('/', function (req, res) {
 	res.send('<h1> Paya Generator 3000 </h1>' + paya().join('<br>'));
 });
 
-app.listen(8080, function () {
-	  console.log('Example app listening on port 3000!');
+app.listen(port, function () {
+	  console.log('Example app listening on port:' + port);
 });
